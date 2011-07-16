@@ -1,12 +1,9 @@
 <?php
 
 /**
- * (c)2011 The Giving Network Pty Ltd
- * mycause.com.au
  *
  * @author Amir Sadrinia
  * @date 2011-05-16
- * @package MyCause MVC Framework
  */
 
 
@@ -25,7 +22,6 @@ class Controller {
     $this->savant = $savantInstance;
     $this->stylesheets[] = "core.css";
 	$this->js_libs[] = "jquery.min.js";
-    $this->js_libs[] = "core.js";
     $this->meta_tags[] = array("name" => "keywords" , "content" => "TEST TEST");
     
     if(!isset($_SESSION[$this->workflows_ref]))

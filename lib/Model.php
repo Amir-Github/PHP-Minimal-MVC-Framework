@@ -1,12 +1,9 @@
 <?php
 
 /**
- * (c)2011 The Giving Network Pty Ltd
- * mycause.com.au
  *
  * @author Amir Sadrinia
  * @date 2011-05-16
- * @package MyCause MVC Framework
  */
 
 include_once "models.php";

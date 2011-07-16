@@ -1,0 +1,62 @@
+
+Like all other MVC frameworks the idea is to have codes relating to database and data-handling (Model) separated from all the HTML/CSS/javascript code (View) and all business-logic related codes(controller).  In order to do that all we need to follow some guidelines and basic development methods. 
+
+all you need to do is to put your files in seperated directories and there are some easy tools which I have developed to make everything easier to do.
+
+
+CONTROLLERS
+
+All PHP files located in 'page' directory are considered as controllers by default, meaning that there shouldn't be any HTML/CSS/Javascript code hardcoded in them, they are just responsible to get the data from database (mostly) through the Model objects. 
+All controllers must start with the following line:
+   require_once("lib/controller_start.php");
+In order to have access to the database and the Controller object, once you have this, you will have access to two important objects:
+
+1. $controller : this object provide following methods to use:
+ - add_style_sheet($css) : this function gets the name of a stylesheet file and make sure that it will be added to the target page when the page loads. (controller looks for the file inside /css directory)
+ - add_js_lib($css): does the same thing for javascript libraries ( but inside /javascript directory)
+ - add_meta_tag($meta): does the same for meta tags
+ - set_title($title): sets the title of the target page
+ - display_page($target): in almost all cases there must be at least one call to this method when you are ready to render the page, it get the name of the target page (must be located in '/view' directory) and render the actual page. 
+ - set_template($template): this method allows you to change the default template, passing parameter is the name of a template file located in '/templates' directory. (name of the default template is 'standard.tpl.php')
+ - start_workflow($name , $initial_values): this method stores an array of data on the session for you which can be accessed later in any page by get_workflow function.
+ - get_workflow($name): you can retrieve what you have already stored by start_workflow.
+ - update_workflow($name , $values): you can use this function to update the values on your workflow.
+ - end_workflow($name): once you are done, you should call this function to clear your session. 
+
+2. $page : this object allows you to simply pass data from your controller to your actual page. You can simply add new properties to this object and then they will be available in the target page, for instance if you have a statement like this:
+$page->hello = "Hello World!";
+Then in the target page you can access this value simply by calling:  $this->hello;
+
+
+VIEWS
+
+ All pages must be located under '/view' directory otherwise, as mentioned in the previous section, display_page() method will not be able to load the page.  Inside view pages all properties that have been defined in the controller are accessible using the '$this' object so for instance if you have fetched a list of book names from DB and assigned it to a property called books (all in your controller), then you might want to have a code like below in your view:
+ echo "<ul>" ; 
+   foreach($this->books as $book) echo "<li>$book->name</li>";
+ echo "</ul>"; 
+      
+The idea is pretty simple: Do all the logic and data handling in the controller, pass everything you need through $page object to the view layer and show them however you would like.
+All views are rendered as part of the template that has been set in the controller (although in most cases you don't have to worry about that and the default template is used). This template dictates where the content of view will be rendered inside a HTML document and what stylesheets and javascript libraries are available. Default template renders your page inside the body of HTML document in the centre of the page.
+'core.css' and 'jquery.min.js' are always loaded by default so we always need them inside thier dedicated directories /css and /javascript.
+
+
+MODEL
+
+In order to reduce the code duplication and keep the SQL queries separated from rest of the code,  Model class has been implemented  to handle all common DB related scenarios. All you need to do is to include "lib/Model.php" inside you controller. Once you have included this file you can use 'Model::get_model_for($modelname)' to have a
+empty instance of the requested model created, once you have obtained the model object following methods are available to call:
+ - findby()
+ - findAll()
+ - findWhere()
+ - save()
+ - update()
+ - save_or_update()
+ - get_linked_models()
+ - delete()
+ 
+each model object can have all the properties that has been defined in the mapping array inside the 'models.php' file. It means that everytime you need to create a new table you will also need to add a new mapping array in 'models.php' in order to be able to create model objects for that table.
+
+please have a look at 'lib/models.php' to get the idea of how to define your models [if you don't define a field name, the model's field will have the same name as the corresponding table's column by default].
+The code below uses book model to get all charities whose 'status' fields equal to 1 and sort them by their id , it then assigns the result to '$page->books' which means it will be available inside the target page:
+
+$bookModel = Model::get_model_for("book");
+$page->books = $bookModel->findBy( "status"  ,0 , array("id"=>"ASC"));
