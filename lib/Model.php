@@ -1,11 +1,10 @@
 <?php
-
 /**
  *
  * @author Amir Sadrinia
  * @date 2011-05-16
  */
-
+ 
 include_once "models.php";
 
 class Model {
